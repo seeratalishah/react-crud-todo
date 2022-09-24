@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { getAllToDos } from '../api/ToDoApi';
+import TodoListItem from './TodoListItem';
 
 function ToDoList() {
   
   const [todoList, setTodoList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
     const fetchTodos = async ()=>{
@@ -15,25 +18,31 @@ function ToDoList() {
         }))
         setTodoList(todoData);
       } catch (err) {
-        console.log(err);
+        toast.error(err.message)
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchTodos();
   },[]);
 
+  const todoRenderList = ()=>{
+    if(!todoList.length)
+    {
+      return <p>No Todo Items Found</p>
+    }
+
+    return todoList.map((todo)=>{
+      return <TodoListItem todo={todo} />
+    })
+  }
+
   return (
     <div>
         <h1>React CRUD Todo List</h1>
         {
-          todoList.map((todo)=>{
-            return (
-              <div key={todo.id}>
-                <h2>{todo.title}</h2>
-                <p>{todo.description}</p>
-              </div>
-            )
-          })
+          loading ? <p>Loading Todo List...</p> : todoRenderList()
         }
     </div>
   )
