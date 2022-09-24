@@ -5,6 +5,5 @@ export async function getAllToDos(){
     return jsonResponse
   }
   
-  throw new Error(response);
-  
+  throw new Error("Could not load todo's. Please try again");
 }
